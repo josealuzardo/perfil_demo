@@ -15,8 +15,9 @@ class ExploreScreen extends StatelessWidget {
       itemBuilder: (context, index) {
         final person = people[index];
         return ListTile(
-          leading: CircleAvatar(child: Text(person.name[0])),
+          leading: CircleAvatar(foregroundImage: NetworkImage(person.imageUrl),),
           title: Text(person.name),
+          subtitle: Text('${person.city} - ${person.age} years old'),
           onTap: () {
             Navigator.of(context).push(
               MaterialPageRoute(
