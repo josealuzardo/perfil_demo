@@ -1,16 +1,61 @@
-# perfil_demo
+# 🧑‍💻 User Profile — Flutter Development Task
+This project is a Flutter-based implementation of a user profile screen, completed as part of a technical assessment. It includes both the simple version and optional bonus sections inspired by the scrollable design provided in the Figma file.
 
-A new Flutter project.
+## 📱 Features
+- Built with Flutter 3.32.6
+- Responsive UI for multiple screen sizes
+- User profile layout with a "Kudos Received" section
+- Bonus widgets from the extended scrollable design
+- Light animations and basic interactivity (optional)
 
-## Getting Started
+🚀 Getting Started
+Clone the repository:
 
-This project is a starting point for a Flutter application.
+```bash
+git clone https://github.com/[your-username]/user_profile_flutter.git
+cd user_profile_flutter
+```
 
-A few resources to get you started if this is your first Flutter project:
+Check your Flutter version:
+```bash
+flutter --version
+# Should match Flutter 3.32.6
+```
+Install dependencies:
+```bash
+flutter pub get
+```
+Run the project:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+```bash
+flutter run
+```
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 🎨 Design Approach
+The UI closely follows the layout and styling provided in the Figma file. The implementation emphasizes clarity, modular widget structuring, and design consistency. Bonus sections from the scrollable layout were added to showcase adaptability and creative initiative.
+
+## 📁 Project Structure
+lib/
+├── main.dart
+├── screens/
+│   ├── person_profile.dart
+│   └── home.dart
+├── widgets/
+│   ├── kudos_box.dart
+│   └── profile_header.dart
+├── models/
+│   └── user_model.dart
+└── utils/
+    └── theme.dart
+## ✨ Bonus Implementations
+- Scrollable layout with dynamic components
+- Smooth transitions and visual effects
+- Decorative icons and themed UI blocks
+- Responsive layout adjustments for smaller screens
+
+📬 Contact
+Feel free to reach out if you have any questions or feedback:
+
+Jose A. Luzardo 
+- **Linkedin:** www.linkedin.com/in/jose-alejandro-luzardo-flores-8466a1256
+- **Email:** joluzflores@gmail.com
