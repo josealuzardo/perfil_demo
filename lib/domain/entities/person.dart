@@ -13,6 +13,8 @@ class Person {
   final String age;
   final String gamePlayed;
   final String username;
+  final String kudosReceived;
+  final String imageUrl;
   final String workplace;
   final String city;
   final List<Language> languages;
@@ -28,6 +30,8 @@ class Person {
     required this.position,
     required this.age,
     required this.gamePlayed,
+    required this.kudosReceived,
+    required this.imageUrl,
     required this.username,
     required this.jobTitle,
     required this.workplace,
@@ -46,6 +50,8 @@ class Person {
     age: json['age'],
     position: json['position'],
     gamePlayed: json['gamePlayed'],
+    kudosReceived: json['kudosReceived'],
+    imageUrl: json['imageUrl'],
     username: json['username'],
     jobTitle: json['jobTitle'],
     workplace: json['workplace'],
@@ -69,6 +75,8 @@ class Person {
     'id': id,
     'bio': bio,
     'position': position,
+    'kudosReceived': kudosReceived,
+    'imageUrl': imageUrl,
     'name': name,
     'age': age,
     'gamePlayed': gamePlayed,
