@@ -2,57 +2,88 @@ import 'package:flutter/material.dart';
 import 'package:perfil_demo/domain/entities/person.dart';
 import 'package:perfil_demo/domain/entities/skill.dart';
 
-class ProfileDetailPage extends StatelessWidget {
+class ProfileDetailPage extends StatefulWidget {
   final Person person;
 
   const ProfileDetailPage({required this.person});
 
   @override
+  _ProfileDetailPageState createState() => _ProfileDetailPageState();
+}
+
+class _ProfileDetailPageState extends State<ProfileDetailPage> {
+  bool _showAllInterests = false; // Controla si se muestran todos los chips
+
+  @override
   Widget build(BuildContext context) {
-    final skillsByType = person.computeSkillScores();
+    final skillsByType = widget.person.computeSkillScores();
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      extendBodyBehindAppBar: true, // Permite que el cuerpo se extienda detrás del AppBar
+      backgroundColor: Theme.of(context).colorScheme.onPrimary,
       appBar: AppBar(
-        title: Text('@${person.name.toLowerCase().replaceAll(" ", "")}'),
-        actions: [IconButton(icon: Icon(Icons.message), onPressed: () {})],
+        backgroundColor: Colors.transparent, // Hace el AppBar transparente
+        elevation: 0, // Elimina la sombra del AppBar
+        actions: [IconButton(icon: Icon(Icons.notes), onPressed: () {})],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
+        physics: const BouncingScrollPhysics(),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildHeader(person),
+            _buildHeader(widget.person, context),
             const SizedBox(height: 20),
-            _buildInfoSection(person),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: _buildInfoSection(widget.person),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: const SizedBox(height: 20),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: _buildInterests(widget.person, context),
+            ),
             const SizedBox(height: 20),
-            _buildSkillSummary(skillsByType),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: _buildSkillSummary(skillsByType, context),
+            ),
             const SizedBox(height: 20),
-            _buildInterests(person),
-            const SizedBox(height: 20),
-            _buildSupportedTeams(person),
-            const SizedBox(height: 20),
-            _buildAdmiredPlayers(person),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildHeader(Person person) {
+  Widget _buildHeader(Person person, context) {
     return Stack(
       alignment: Alignment.center,
       children: [
-        // Imagen de fondo
+        // Imagen de fondo con degradado
         Container(
-          height: 280,
+          width: double.infinity,
+          height: 400,
           decoration: BoxDecoration(
             image: DecorationImage(
-              image: NetworkImage('https://tse4.mm.bing.net/th/id/OIP.ChhbU86-I3mtCe7Du35L4QHaE8?rs=1&pid=ImgDetMain&o=7&rm=3'),
+              image: NetworkImage(
+                'https://tse4.mm.bing.net/th/id/OIP.ChhbU86-I3mtCe7Du35L4QHaE8?rs=1&pid=ImgDetMain&o=7&rm=3',
+              ),
               fit: BoxFit.cover,
-              colorFilter: ColorFilter.mode(
-                Colors.amber,
-                BlendMode.darken,
+            ),
+          ),
+          child: Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Theme.of(context).colorScheme.primary.withOpacity(0.3), // Parte clara arriba
+                  Colors.black.withOpacity(0.8), // Parte oscura abajo
+                  Colors.black.withOpacity(0.9), // Parte oscura abajo
+                ],
               ),
             ),
           ),
@@ -65,7 +96,9 @@ class ProfileDetailPage extends StatelessWidget {
             // Avatar circular
             CircleAvatar(
               radius: 50,
-              backgroundImage: NetworkImage('https://tse3.mm.bing.net/th/id/OIP.Bc2vhVH-xGuo5f29fygEkgHaE6?rs=1&pid=ImgDetMain&o=7&rm=3'),
+              backgroundImage: NetworkImage(
+                'https://tse3.mm.bing.net/th/id/OIP.Bc2vhVH-xGuo5f29fygEkgHaE6?rs=1&pid=ImgDetMain&o=7&rm=3',
+              ),
               backgroundColor: Colors.white,
             ),
             const SizedBox(height: 12),
@@ -87,7 +120,7 @@ class ProfileDetailPage extends StatelessWidget {
 
             // Filas con estadísticas
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+              padding: const EdgeInsets.symmetric(horizontal: 50),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -96,6 +129,31 @@ class ProfileDetailPage extends StatelessWidget {
                   _buildInfoColumn('Juegos', person.gamePlayed),
                 ],
               ),
+            ),
+
+            const SizedBox(height: 20),
+            FilledButton(
+              style: FilledButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+              ),
+              onPressed: () {},
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.7,
+                alignment: Alignment.center,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.chat_bubble_outline),
+                    SizedBox(width: 8),
+                    const Text("Messages"),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              person.bio,
+              style: const TextStyle(fontSize: 16, color: Colors.white70),
             ),
           ],
         ),
@@ -127,94 +185,163 @@ class ProfileDetailPage extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Ciudad: ${p.city}'),
-        Text('Idiomas: ${p.languages.map((l) => l.name).join(', ')}'),
+        const SizedBox(height: 16),
+        _infoRow(
+          Icons.work_outline,
+          '',
+          '${widget.person.jobTitle} at ${widget.person.workplace}',
+        ),
+
+        _infoRow(Icons.location_on_outlined, 'Live in', widget.person.city),
+
+        _infoRow(
+          Icons.language,
+          'Speaks',
+          widget.person.languages.map((l) => l.name).join(', '),
+        ),
+
+        _infoRow(
+          Icons.sports_soccer,
+          'Supports',
+          widget.person.supportedTeams.map((t) => t.name).join(', '),
+        ),
+
+        _infoRow(
+          Icons.star_outline,
+          'Admires',
+          widget.person.admiredPlayers.map((p) => p.fullName).join(', '),
+        ),
+
+        const Divider(color: Colors.white70, thickness: 0.5),
       ],
     );
   }
 
-  Widget _buildSkillSummary(Map<SkillType, int> skills) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: skills.entries.map((entry) {
-        return Column(
-          children: [
-            Text(entry.key.name.toUpperCase()),
-            Text('${entry.value}/5'),
-          ],
-        );
-      }).toList(),
+  Widget _infoRow(IconData icon, String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 22, color: Colors.grey.shade700),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  value,
+                  style: TextStyle(fontSize: 15, color: Colors.grey.shade800),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
-  Widget _buildInterests(Person person) {
+  Widget _buildSkillSummary(Map<SkillType, int> skills, context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'Intereses',
+          'Football skills',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+
+        const SizedBox(height: 12),
+        _skillBar('Technical', skills[SkillType.technical], context),
+
+        _skillBar('Fitness', skills[SkillType.fitness], context),
+
+        _skillBar('Tactical', skills[SkillType.tactical], context),
+      ],
+    );
+  }
+
+  Widget _buildInterests(Person person, context) {
+    final maxVisibleChips = 6; // Número máximo de chips visibles inicialmente
+    final interests = person.interests;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Interested in',
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         Wrap(
           spacing: 8,
-          children: person.interests
-              .map(
-                (interest) => Chip(
-                  label: Text(interest.title),
-                  backgroundColor: Colors.blue.shade50,
+          children: [
+            // Muestra los primeros 6 chips o todos si _showAllInterests es true
+            ...(_showAllInterests
+                ? interests
+                : interests.take(maxVisibleChips)).map((interest) {
+              return Chip(
+                backgroundColor: Theme.of(context).colorScheme.onPrimary,
+                label: Text(interest.title),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  side: BorderSide(color: Colors.grey, width: 1),
                 ),
-              )
-              .toList(),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSupportedTeams(Person person) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Equipos Favoritos',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        ListView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: person.supportedTeams.length,
-          itemBuilder: (context, index) {
-            final team = person.supportedTeams[index];
-            return ListTile(
-              leading: Icon(Icons.sports_soccer, color: Colors.green),
-              title: Text(team.name),
-            );
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget _buildAdmiredPlayers(Person person) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Jugadores Admirados',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        Column(
-          children: person.admiredPlayers
-              .map(
-                (player) => Card(
-                  child: ListTile(
-                    title: Text(player.fullName),
-                    subtitle: Text(player.position),
+              );
+            }).toList(),
+            // Botón "See More" o "See Less"
+            if (interests.length > maxVisibleChips)
+              TextButton(
+                onPressed: () {
+                  setState(() {
+                    _showAllInterests = !_showAllInterests;
+                  });
+                },
+                child: Text(
+                  _showAllInterests ? 'See Less' : 'See More',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-              )
-              .toList(),
+              ),
+          ],
         ),
       ],
+    );
+  }
+
+  Widget _skillBar(String label, int? level, context) {
+    final safeLevel = level ?? 0;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        children: [
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(label, style: TextStyle(fontWeight: FontWeight.w500)),
+                const SizedBox(height: 6),
+                LinearProgressIndicator(
+                  value: safeLevel / 5,
+                  minHeight: 4,
+                  backgroundColor: Colors.grey[850],
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    Theme.of(context).colorScheme.primary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 10),
+          Text('$level/5', style: TextStyle(fontSize: 14)),
+        ],
+      ),
     );
   }
 }

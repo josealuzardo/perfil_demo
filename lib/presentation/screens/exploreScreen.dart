@@ -18,8 +18,7 @@ class ExploreScreen extends StatelessWidget {
           leading: CircleAvatar(child: Text(person.name[0])),
           title: Text(person.name),
           onTap: () {
-            Navigator.push(
-              context,
+            Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (_) => ProfileDetailPage(person: person),
               ),
