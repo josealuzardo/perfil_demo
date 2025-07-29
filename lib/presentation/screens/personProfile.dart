@@ -19,7 +19,8 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
     final skillsByType = widget.person.computeSkillScores();
 
     return Scaffold(
-      extendBodyBehindAppBar: true, // Permite que el cuerpo se extienda detrás del AppBar
+      extendBodyBehindAppBar:
+          true, // Permite que el cuerpo se extienda detrás del AppBar
       backgroundColor: Theme.of(context).colorScheme.onPrimary,
       appBar: AppBar(
         backgroundColor: Colors.transparent, // Hace el AppBar transparente
@@ -33,6 +34,12 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
           children: [
             _buildHeader(widget.person, context),
             const SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: buildKudosBox(
+                int.parse(widget.person.kudosReceived),
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: _buildInfoSection(widget.person),
@@ -64,41 +71,42 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
         // Imagen de fondo con degradado
         Container(
           width: double.infinity,
-          height: 400,
+          height: 415,
           decoration: BoxDecoration(
             image: DecorationImage(
-              image: NetworkImage(
-                'https://tse4.mm.bing.net/th/id/OIP.ChhbU86-I3mtCe7Du35L4QHaE8?rs=1&pid=ImgDetMain&o=7&rm=3',
-              ),
+              image: AssetImage('assets/images/background.png'),
               fit: BoxFit.cover,
             ),
           ),
           child: Container(
-            width: double.infinity,
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Theme.of(context).colorScheme.primary.withOpacity(0.3), // Parte clara arriba
-                  Colors.black.withOpacity(0.8), // Parte oscura abajo
-                  Colors.black.withOpacity(0.9), // Parte oscura abajo
+                  Theme.of(
+                    context,
+                  ).colorScheme.primary.withOpacity(0.3), // Parte clara arriba
+                  Colors.black.withOpacity(0.4), // Parte oscura abajo
+                  Colors.black.withOpacity(0.5), // Parte oscura abajo
+                  Colors.black.withOpacity(0.6), // Parte oscura abajo
                 ],
               ),
             ),
           ),
         ),
 
-        // Contenido
+        // Contenido desplazado hacia abajo
         Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            SizedBox(
+              height: MediaQuery.of(context).padding.top + kToolbarHeight,
+            ), // Espacio para el AppBar y el notch
             // Avatar circular
             CircleAvatar(
               radius: 50,
-              backgroundImage: NetworkImage(
-                'https://tse3.mm.bing.net/th/id/OIP.Bc2vhVH-xGuo5f29fygEkgHaE6?rs=1&pid=ImgDetMain&o=7&rm=3',
-              ),
+              backgroundImage: NetworkImage(person.imageUrl),
               backgroundColor: Colors.white,
             ),
             const SizedBox(height: 12),
@@ -120,23 +128,26 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
 
             // Filas con estadísticas
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 50),
+              padding: const EdgeInsets.symmetric(horizontal: 70),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _buildInfoColumn('Edad', '${person.age} años'),
-                  _buildInfoColumn('Posición', person.position),
-                  _buildInfoColumn('Juegos', person.gamePlayed),
+                  _buildInfoColumn('Yo', '${person.age} yo'),
+                  _buildInfoColumn('Position', person.position),
+                  _buildInfoColumn('Games', person.gamePlayed),
                 ],
               ),
             ),
-
             const SizedBox(height: 20),
+
+            // Botón "Messages"
             FilledButton(
               style: FilledButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.primary,
               ),
-              onPressed: () {},
+              onPressed: () {
+                // Acción del botón
+              },
               child: Container(
                 width: MediaQuery.of(context).size.width * 0.7,
                 alignment: Alignment.center,
@@ -144,20 +155,53 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(Icons.chat_bubble_outline),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     const Text("Messages"),
                   ],
                 ),
               ),
             ),
             const SizedBox(height: 20),
-            Text(
-              person.bio,
-              style: const TextStyle(fontSize: 16, color: Colors.white70),
+
+            // Bio
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                person.bio,
+                style: const TextStyle(fontSize: 16, color: Colors.white70),
+                textAlign: TextAlign.center,
+              ),
             ),
           ],
         ),
       ],
+    );
+  }
+
+  Widget buildKudosBox(int kudosCount) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      margin: const EdgeInsets.only(top: 12),
+      decoration: BoxDecoration(
+        color: const Color(
+          0xFF1F1F1F,
+        ), // fondo diferente al fondo base (#121212)
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.thumb_up_alt_outlined, color: Colors.yellowAccent),
+          const SizedBox(width: 12),
+          Text(
+            '$kudosCount kudos received',
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -223,7 +267,7 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 22, color: Colors.grey.shade700),
+          Icon(icon, size: 22, color: Color(0xFFAEAEB2)),
           const SizedBox(width: 12),
           Expanded(
             child: Row(
@@ -236,7 +280,7 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
                 const SizedBox(width: 8),
                 Text(
                   value,
-                  style: TextStyle(fontSize: 15, color: Colors.grey.shade800),
+                  style: TextStyle(fontSize: 15, color: Color(0xFFAEAEB2)),
                 ),
               ],
             ),
@@ -250,10 +294,7 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Football skills',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
+        const Text('Football skills', style: TextStyle(fontSize: 15)),
 
         const SizedBox(height: 12),
         _skillBar('Technical', skills[SkillType.technical], context),
@@ -272,26 +313,24 @@ class _ProfileDetailPageState extends State<ProfileDetailPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Interested in',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
+        const Text('Interested in', style: TextStyle(fontSize: 15)),
+        SizedBox(height: 10),
         Wrap(
           spacing: 8,
           children: [
             // Muestra los primeros 6 chips o todos si _showAllInterests es true
-            ...(_showAllInterests
-                ? interests
-                : interests.take(maxVisibleChips)).map((interest) {
-              return Chip(
-                backgroundColor: Theme.of(context).colorScheme.onPrimary,
-                label: Text(interest.title),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                  side: BorderSide(color: Colors.grey, width: 1),
-                ),
-              );
-            }).toList(),
+            ...(_showAllInterests ? interests : interests.take(maxVisibleChips))
+                .map((interest) {
+                  return Chip(
+                    backgroundColor: Theme.of(context).colorScheme.onPrimary,
+                    label: Text(interest.title),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      side: BorderSide(color: Colors.grey, width: 1),
+                    ),
+                  );
+                })
+                .toList(),
             // Botón "See More" o "See Less"
             if (interests.length > maxVisibleChips)
               TextButton(
