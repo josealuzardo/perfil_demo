@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:perfil_demo/domain/entities/person.dart';
 import 'package:perfil_demo/presentation/screens/personProfile.dart';
+import 'package:perfil_demo/infraestructure/personDatasource.dart';
 
 class ExploreScreen extends StatelessWidget {
-  final List<Person> people = [
-    Person(name: 'Carlos Mendoza', location: 'Caracas', skillLevel: 'Intermedio'),
-    Person(name: 'Ana Torres', location: 'Maracay', skillLevel: 'Avanzado'),
-    Person(name: 'Luis García', location: 'Barquisimeto', skillLevel: 'Principiante'),
-  ];
+  final List<Person> people = PersonDatasource().getPeople();
+
+  ExploreScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -18,12 +17,11 @@ class ExploreScreen extends StatelessWidget {
         return ListTile(
           leading: CircleAvatar(child: Text(person.name[0])),
           title: Text(person.name),
-          subtitle: Text('${person.location} • ${person.skillLevel}'),
           onTap: () {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (_) => PersonProfile(person: person),
+                builder: (_) => ProfileDetailPage(person: person),
               ),
             );
           },
